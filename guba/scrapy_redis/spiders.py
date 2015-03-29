@@ -21,7 +21,8 @@ class RedisMixin(object):
         # idle signal is called when the spider has no requests left,
         # that's when we will schedule new requests from redis queue
         self.crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
-        self.crawler.signals.connect(self.item_scraped, signal=signals.item_scraped)
+        # self.crawler.signals.connect(self.item_scraped, signal=signals.item_scraped)
+        self.crawler.signals.connect(self.item_scraped, signal=signals.request_scheduled)
         self.log("Reading URLs from redis list '%s'" % self.redis_key)
 
     def next_request(self):

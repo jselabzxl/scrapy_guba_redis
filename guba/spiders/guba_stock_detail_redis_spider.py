@@ -34,6 +34,9 @@ class GubaStockDetailRedisSpider(RedisSpider):
         except:
             raise UnknownResponseError
 
+        headcode_span = soup.find("span", {"id": "stockheadercode"})
+        stock_id = headcode_span.find("a").string
+
         content = soup.find('div', {'class':'stockcodec'}).text
         releaseTimePara = re.search(r'发表于 (.*?) (.*?) ', str(soup.find('div', {'class': 'zwfbtime'})))
         part1 = releaseTimePara.group(1).decode('utf-8')
@@ -45,7 +48,8 @@ class GubaStockDetailRedisSpider(RedisSpider):
         if len(zwlitxb_divs):
             lastReplyTime = re.search(r'发表于 (.*?)<', str(zwlitxb_divs[0])).group(1).decode('utf-8').replace('  ', ' ')
 
-        item_dict = {'post_id': post_id, 'content': content, 'releaseTime': releaseTime, 'lastReplyTime': lastReplyTime}
+        item_dict = {'post_id': post_id, 'content': content, 'releaseTime': releaseTime, 'lastReplyTime': lastReplyTime, \
+                'stock_id': stock_id}
         item = GubaPostDetailItem()
         for key in GubaPostDetailItem.RESP_ITER_KEYS:
             item[key] = item_dict[key]

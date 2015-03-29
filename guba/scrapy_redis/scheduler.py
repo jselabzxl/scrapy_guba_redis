@@ -77,7 +77,6 @@ class Scheduler(object):
     def next_request(self):
         block_pop_timeout = self.idle_before_close
         request = self.queue.pop(block_pop_timeout)
-        print '------here', request
         if request and self.stats:
             self.stats.inc_value('scheduler/dequeued/redis', spider=self.spider)
         return request

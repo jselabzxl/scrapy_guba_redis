@@ -39,20 +39,9 @@ class GubaPostDetailItem(Item):
     content = Field() # 内容
     releaseTime = Field() # 发表时间
     lastReplyTime = Field() # 最后回复时间
-    title = Field() # 帖子标题
-    url = Field() # 帖子url
-    stock_name = Field() # 股票名称
     stock_id = Field() # 股票代码
-    user_name = Field() # 作者昵称
-    user_url = Field() # 作者url
-    user_id = Field() # 作者id
-    clicks = Field() # 点击数
-    replies = Field() # 回复数
-    stockholder = Field() # 是否是股东, True or False
-    em_info = Field() #
-    create_date = Field() # '12-01'
 
-    RESP_ITER_KEYS = ['post_id', 'content', 'releaseTime', 'lastReplyTime']
+    RESP_ITER_KEYS = ['post_id', 'content', 'releaseTime', 'lastReplyTime', 'stock_id']
 
     PIPED_UPDATE_KEYS = RESP_ITER_KEYS
 
@@ -102,46 +91,6 @@ class GubaPostListItem(Item):
             else:
                 d[k] = v
         return d
-
-class GubaPostItem(Item):
-    post_id = Field() # 帖子唯一标识
-    title = Field() # 帖子标题
-    url = Field() # 帖子url
-    stock_name = Field() # 股票名称
-    stock_id = Field() # 股票代码
-    user_name = Field() # 作者昵称
-    user_url = Field() # 作者url
-    user_id = Field() # 作者id
-    clicks = Field() # 点击数
-    replies = Field() # 回复数
-    content = Field() # 内容
-    releaseTime = Field() # 发表时间
-    lastReplyTime = Field() # 最后回复时间
-    stockholder = Field() # 是否是股东, True or False
-    em_info = Field() #
-
-    LIST_PAGE_KEYS = ['post_id', 'url', 'stock_id', \
-            'stock_name', 'user_name', 'user_url', 'user_id', \
-            'clicks', 'replies', 'stockholder', 'em_info']
-
-    POST_PAGE_KEYS = ['title', 'content', 'releaseTime', 'lastReplyTime']
-
-    PIPED_UPDATE_KEYS = ['title', 'url', 'stock_id', 'stock_name', \
-    'user_name', 'user_url', 'user_id', 'clicks', 'replies', \
-    'stockholder', 'content', 'releaseTime', 'lastReplyTime', 'em_info']
-
-    def __init__(self):
-        super(GubaPostItem, self).__init__()
-
-    def to_dict(self):
-        d = {}
-        for k, v in self.items():
-            if isinstance(v, (GubaPostItem, GubaStocksItem)):
-                d[k] = v.to_dict()
-            else:
-                d[k] = v
-        return d
-
 
 class GubaStocksItem(Item):
     stock_id = Field()

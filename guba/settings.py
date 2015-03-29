@@ -109,7 +109,7 @@ DOWNLOADER_MIDDLEWARES = {
 
     # A middlware to retry failed requests that are potentially caused by temporary problems such as 
     # a connection timeout or HTTP 500 error.
-    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None, # 500,
+    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 500,
 
     # This middleware sets all default requests headers specified in the :setting:`DEFAULT_REQUEST_HEADERS` setting.
     'scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware': None,
@@ -140,7 +140,7 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 ITEM_PIPELINES = {
-    # 'guba.pipelines.MongodbPipeline': 300
+    'guba.pipelines.MongodbPipeline': 300,
     'guba.scrapy_redis.pipelines.RedisPipeline': 400
     # 'guba.pipelines.JsonWriterPipeline': 800
 }
@@ -172,8 +172,7 @@ RETRY_ADD_WAIT = 1 # 每次重试后增加的等待秒数
 MONGOD_HOST = '219.224.135.47'
 MONGOD_PORT = 27019
 MONGOD_DB = 'guba'
-GUBA_POST_COLLECTION = 'post'
-GUBA_POST_LIST_COLLECTION = 'post_list'
+GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
 GUBA_STOCK_COLLECTION = 'stock'
 
 # Proxy ip list file
