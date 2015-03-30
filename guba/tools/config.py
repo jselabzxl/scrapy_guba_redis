@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import redis
 import pymongo
 
-
+REDIS_HOST = '219.224.135.48'
+REDIS_PORT = 6379
 MONGOD_HOST = '219.224.135.60'
 MONGOD_PORT = 27019
 MONGOD_DB = 'guba'
 GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
+GUBA_STOCK_COLLECTION = 'stock'
 MONGODUMP = '/home/ubuntu3/linhao/mongodump/'
 
 def _default_mongo(host=MONGOD_HOST, port=MONGOD_PORT, usedb=MONGOD_DB):
@@ -18,3 +21,9 @@ def _default_mongo(host=MONGOD_HOST, port=MONGOD_PORT, usedb=MONGOD_DB):
     return db
 
 mongo = _default_mongo()
+
+def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
+    return redis.StrictRedis(host, port, db)
+
+redis = _default_redis()
+
