@@ -15,7 +15,7 @@ while 1:
     start_count = total_count
     total_count = 0
     for col in collection_names:
-        total_count += mongo[col].count()
+        total_count += mongo[col].find({"content": {"$exists": True}}).count()
 
     print total_count - start_count
     time.sleep(60)

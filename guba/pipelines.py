@@ -131,7 +131,7 @@ class MongodbPipeline(object):
             try:
                 post['first_in'] = time.time()
                 post['last_modify'] = post['first_in']
-                b[post_collection].insert(post)
+                db[post_collection].insert(post)
             except pymongo.errors.DuplicateKeyError:
                 self.update_post_detail(post_collection, post)
 

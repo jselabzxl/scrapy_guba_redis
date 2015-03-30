@@ -1,0 +1,3 @@
+4 个进程guba_stock_list_redis_spider 3个入口按股票分collection 1540 /min
+15个进程guba_stock_detail_redis_spider 3个入口按股票分collection 1990 /min
+
