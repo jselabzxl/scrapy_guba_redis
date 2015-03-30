@@ -93,11 +93,11 @@ class MongodbPipeline(object):
         elif isinstance(item, GubaPostDetailItem):
             return self.process_post_detail(item, spider)
 
-    def mongos_hash(idstr):
+    def mongos_hash(self, idstr):
         """根据idstr进行hash取mongos入口
         """
         key = gen_key(idstr)
-        mongos = self.mongos_list[key % len(mongos_list)]
+        mongos = self.mongos_list[key % len(self.mongos_list)]
         return mongos
 
     def update_post_detail(self, post_collection, post):
