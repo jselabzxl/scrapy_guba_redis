@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import md5
 import time
 import pymongo
 import os, errno
@@ -42,3 +43,13 @@ def mkdir_p(path):
             pass
         else: 
             raise
+
+def gen_key(key):
+    """Given a string key it returns a long value,
+       this long value represents a place on the hash ring.
+       md5 is currently used because it mixes well.
+    """
+    m = md5.new()
+    m.update(key)
+    return long(m.hexdigest(), 16)
+

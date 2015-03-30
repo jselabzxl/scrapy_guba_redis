@@ -12,7 +12,7 @@ import pymongo
 from scrapy import log
 from twisted.internet.threads import deferToThread
 from guba.items import GubaPostListItem, GubaStocksItem, GubaPostDetailItem, GubaPostDetailAllItem
-from guba.utils import _default_mongo, mkdir_p
+from guba.utils import _default_mongo, mkdir_p, gen_key
 
 
 class JsonWriterPipeline(object):
@@ -45,13 +45,20 @@ class JsonWriterPipeline(object):
 
 
 class MongodbPipeline(object):
-    def __init__(self, db, host, port, post_collection_prefix, stock_collection):
-        self.db_name = db
+    def __init__(self, db, host, port, post_collection_prefix, stock_collection, mongodb_host_port_list, hash_mongo):
         self.host = host
         self.port = port
         self.db = _default_mongo(host, port, usedb=db)
         self.stock_collection = stock_collection
         self.post_collection_prefix = post_collection_prefix
+        self.hash_mongo = hash_mongo
+        self.mongos_list = []
+        for mongo in mongodb_host_port_list:
+            mongo_host = mongo.split(":")[0]
+            mongo_port = int(mongo.split(":")[1]
+            mongos = _default_mongo(mongo_host, port=mongo_port, usedb=db)
+            self.mongos_list.append(mongos)
+
         log.msg('Mongod connect to {host}:{port}:{db}'.format(host=host, port=port, db=db), level=log.INFO)
 
     @classmethod
@@ -61,8 +68,10 @@ class MongodbPipeline(object):
         port = settings.get('MONGOD_PORT', None)
         stock_collection = settings.get('GUBA_STOCK_COLLECTION', None)
         post_collection_prefix = settings.get('GUBA_POST_COLLECTION_PREFIX', None)
+        mongodb_host_port_list = settings.get('MONGOD_HOST_PORT_LIST', None)
+        hash_mongo = settings.get('HASH_MONGO', None)
 
-        return cls(db, host, port, post_collection_prefix, stock_collection)
+        return cls(db, host, port, post_collection_prefix, stock_collection, mongodb_host_port_list, hash_mongo)
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -84,6 +93,13 @@ class MongodbPipeline(object):
         elif isinstance(item, GubaPostDetailItem):
             return self.process_post_detail(item, spider)
 
+    def mongos_hash(idstr):
+        """根据idstr进行hash取mongos入口
+        """
+        key = gen_key(idstr)
+        mongos = self.mongos_list[key % len(mongos_list)]
+        return mongos
+
     def update_post_detail(self, post_collection, post):
         updates = {}
         updates['last_modify'] = time.time()
@@ -92,7 +108,11 @@ class MongodbPipeline(object):
                 updates[key] = post[key]
 
         updates_modifier = {'$set': updates}
-        self.db[post_collection].update({'_id': post['_id']}, updates_modifier)
+        if self.hash_mongo:
+            db = self.mongos_hash(str(post['_id']))
+        else:
+            db = self.db
+        db[post_collection].update({'_id': post['_id']}, updates_modifier)
 
     def process_post_detail(self, item, spider):
         post = item.to_dict()
@@ -100,13 +120,18 @@ class MongodbPipeline(object):
         stock_id = post['stock_id']
         post_collection = self.post_collection_prefix + stock_id
 
-        if self.db[post_collection].find({'_id': post['_id']}).count():
+        if self.hash_mongo:
+            db = self.mongos_hash(str(post['_id']))
+        else:
+            db = self.db
+
+        if db[post_collection].find({'_id': post['_id']}).count():
             self.update_post_detail(post_collection, post)
         else:
             try:
                 post['first_in'] = time.time()
                 post['last_modify'] = post['first_in']
-                self.db[post_collection].insert(post)
+                b[post_collection].insert(post)
             except pymongo.errors.DuplicateKeyError:
                 self.update_post_detail(post_collection, post)
 
@@ -120,7 +145,11 @@ class MongodbPipeline(object):
                 updates[key] = post[key]
 
         updates_modifier = {'$set': updates}
-        self.db[post_collection].update({'_id': post['_id']}, updates_modifier)
+        if self.hash_mongo:
+            db = self.mongos_hash(str(post['_id']))
+        else:
+            db = self.db
+        db[post_collection].update({'_id': post['_id']}, updates_modifier)
 
     def process_post_list(self, item, spider):
         post = item.to_dict()
@@ -128,13 +157,17 @@ class MongodbPipeline(object):
         stock_id = post['stock_id']
         post_collection = self.post_collection_prefix + stock_id
 
-        if self.db[post_collection].find({'_id': post['_id']}).count():
+        if self.hash_mongo:
+            db = self.mongos_hash(str(post['_id']))
+        else:
+            db = self.db
+        if db[post_collection].find({'_id': post['_id']}).count():
             self.update_post_list(post_collection, post)
         else:
             try:
                 post['first_in'] = time.time()
                 post['last_modify'] = post['first_in']
-                self.db[post_collection].insert(post)
+                db[post_collection].insert(post)
             except pymongo.errors.DuplicateKeyError:
                 self.update_post_list(post_collection, post)
 
