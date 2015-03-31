@@ -140,7 +140,8 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 ITEM_PIPELINES = {
-    'guba.pipelines.MongodbPipeline': 300,
+    # 'guba.pipelines.MongodbPipeline': 300,
+    'guba.pipelines.RedisStoragePipeline': 300,
     'guba.scrapy_redis.pipelines.RedisPipeline': 400
     # 'guba.pipelines.JsonWriterPipeline': 800
 }
@@ -183,6 +184,8 @@ PROXY_IP_FILE = './guba/proxy_ips.txt'
 # scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
 REDIS_HOST = '219.224.135.48'
 REDIS_PORT = 6379
+REDIS_STORAGE_HOST = '219.224.135.91'
+REDIS_STORAGE_PORT = 6379
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
