@@ -169,7 +169,7 @@ RETRY_STABLE_TIMES = 100 # 重试100次之后WAIT不再增加
 RETRY_ADD_WAIT = 1 # 每次重试后增加的等待秒数
 
 # MONGODB setting
-HASH_MONGO = True # 表示通过hash选入口，False表示使用固定入口
+HASH_MONGO = False # 表示通过hash选入口，False表示使用固定入口
 MONGOD_HOST = '219.224.135.47'
 MONGOD_PORT = 27019
 MONGOD_HOST_PORT_LIST = ['219.224.135.47:27019', '219.224.135.48:27019', '219.224.135.60:27019']
