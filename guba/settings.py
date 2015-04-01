@@ -140,8 +140,8 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 ITEM_PIPELINES = {
-    # 'guba.pipelines.MongodbPipeline': 300,
-    'guba.pipelines.RedisStoragePipeline': 300,
+    'guba.pipelines.MongodbPipeline': 300,
+    # 'guba.pipelines.RedisStoragePipeline': 300,
     'guba.scrapy_redis.pipelines.RedisPipeline': 400
     # 'guba.pipelines.JsonWriterPipeline': 800
 }
