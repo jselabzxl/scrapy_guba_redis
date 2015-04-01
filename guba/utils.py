@@ -2,6 +2,7 @@
 
 import md5
 import time
+import redis
 import pymongo
 import os, errno
 from datetime import datetime
@@ -9,7 +10,8 @@ from datetime import datetime
 
 MONGOD_HOST = 'localhost'
 MONGOD_PORT = 27017
-
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
 
 def _default_mongo(host=MONGOD_HOST, port=MONGOD_PORT, usedb='test'):
     # 强制写journal，并强制safe
@@ -53,3 +55,6 @@ def gen_key(key):
     m.update(key)
     return long(m.hexdigest(), 16)
 
+
+def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
+    return redis.StrictRedis(host, port, db)
