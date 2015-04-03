@@ -5,6 +5,7 @@
 
 import re
 import json
+import time
 import math
 import urllib2
 from scrapy import log
@@ -13,7 +14,8 @@ from scrapy.conf import settings
 from scrapy.spider import Spider
 from BeautifulSoup import BeautifulSoup
 from guba.items import GubaPostListItem
-from guba.utils import _default_mongo, HMS2ts, now_datestr
+from guba.middlewares import UnknownResponseError
+from guba.utils import _default_redis, _default_mongo, HMS2ts, now_datestr
 from guba.scrapy_redis.spiders import RedisSpider
 
 HOST_URL = "http://guba.eastmoney.com/"
@@ -32,6 +34,8 @@ class GubaStockListRtRedisSpider(RedisSpider):
     redis_key = 'guba_stock_list_redis_spider:start_urls'
 
     def parse(self, response):
+        print 'response accepted: ', time.time()
+
         results = []
         resp = response.body
         try:
@@ -40,11 +44,16 @@ class GubaStockListRtRedisSpider(RedisSpider):
             page = 1
         soup = BeautifulSoup(resp)
 
-        headcode_span = soup.find("span", {"id": "stockheadercode"})
-        stock_id = headcode_span.find("a").string
+        try:
+            headcode_span = soup.find("span", {"id": "stockheadercode"})
+            stock_id = headcode_span.find("a").string
+        except:
+            raise UnknownResponseError
 
         # 已爬取的单支股票最新post_id
-        latest_post_id = int(redis.get(LATEST_POST_ID.format(stock_id=stock_id)))
+        latest_post_id = redis.get(LATEST_POST_ID.format(stock_id=stock_id))
+        if latest_post_id:
+            latest_post_id = int(latest_post_id)
 
         # 本次爬取任务最新的post_id
         newest_post_id = None
@@ -59,8 +68,10 @@ class GubaStockListRtRedisSpider(RedisSpider):
             l2_span = item_soup.find("span", {"class": "l2"})
             replies = int(l2_span.string)
 
-            isStockholder = False
-            isTopic = False
+            isStockholder = False # 是否为股东
+            isTopic = False # 话题
+            isTop = False # 置顶
+            isNews = False # 新闻
             em_info = None
             l3_span = item_soup.find("span", {"class": "l3"})
             em = l3_span.find("em")
@@ -68,10 +79,14 @@ class GubaStockListRtRedisSpider(RedisSpider):
                 em_info = em.text
 
             if em_info:
-                if em_info == u'股东':
+                if em_info == u'股友':
                     isStockholder = True
                 elif em_info == u'话题':
                     isTopic = True
+                elif em_info == u'置顶':
+                    isTop = True
+                elif em_info == u'新闻':
+                    isNews = True
 
             # d表示按照时间排序回复
             post_url = HOST_URL + l3_span.find("a").get("href").replace('.html', ',d.html')
@@ -96,12 +111,17 @@ class GubaStockListRtRedisSpider(RedisSpider):
             l6_span = item_soup.find("span", {"class": "l6"})
             create_date = l6_span.text
 
+            # 话题贴不属于该股吧，不存数据 
             if not isTopic:
-                if latest_post_id and post_id <= latest_post_id:
-                    break
+                """
+                # 对非置顶贴以及非新闻贴进行去重
+                if not isTop and not isNews:
+                    if latest_post_id and post_id <= latest_post_id:
+                        break
 
-                if not newest_post_id or (newest_post_id and newest_post_id < post_id):
-                    newest_post_id = post_id
+                    if not newest_post_id or (newest_post_id and newest_post_id < post_id):
+                        newest_post_id = post_id
+                """
 
                 item_dict = {'post_id': post_id, 'url': post_url, 'stock_id': stock_id, \
                 'stock_name': stock_name, 'user_name': user_name, 'user_url': user_url, 'user_id': user_id, \
@@ -114,7 +134,17 @@ class GubaStockListRtRedisSpider(RedisSpider):
 
                 results.append(item)
 
-            if newest_post_id and newest_post_id > latest_post_id:
-                redis.set(LATEST_POST_ID.format(stock_id=stock_id), newest_post_id)
+        sorted_results = sorted(results, key=lambda item: item['post_id'], reverse=True)
+        if len(sorted_results):
+            newest_post_id = sorted_results[0]['post_id']
+
+        results = filter(lambda item: item['post_id'] > latest_post_id, sorted_results)
+        for r in results:
+            print r['post_id'], latest_post_id
+
+        if newest_post_id and newest_post_id > latest_post_id:
+            redis.set(LATEST_POST_ID.format(stock_id=stock_id), newest_post_id)
+
+        print 'parse complited: ', time.time()
 
         return results

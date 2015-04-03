@@ -182,7 +182,7 @@ GUBA_STOCK_COLLECTION = 'stock'
 PROXY_IP_FILE = './guba/proxy_ips.txt'
 
 # scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
-REDIS_HOST = '219.224.135.48'
+REDIS_HOST = '219.224.135.91'
 REDIS_PORT = 6379
 REDIS_STORAGE_HOST = '219.224.135.91'
 REDIS_STORAGE_PORT = 6379
