@@ -20,7 +20,7 @@ while 1:
     for col in collection_names:
         if mode == 'detail':
             total_count += mongo[col].find({"content": {"$exists": True}}).count()
-        elif mode == 'list'::
+        elif mode == 'list':
             total_count += mongo[col].find().count()
 
     print total_count - start_count
