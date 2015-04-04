@@ -266,8 +266,10 @@ class DownloadTimeoutRetryMiddleware(object):
         if isinstance(exception, self.EXCEPTIONS_TO_RETRY) \
                 and 'dont_retry' not in request.meta:
             proxy_ip = request.meta['proxy']
+
             # 在保证网络通畅的情况下发现不能用的ip，写到文件
             #with open('./guba/tools/ip_forbid.txt', 'a') as fw:
             #    fw.write('%s\n' % proxy_ip)
+
             self.redis.zincrby(self.proxy_redis_key, proxy_ip, amount=self.proxy_ip_punish)
             return self._retry(request, exception, spider)
