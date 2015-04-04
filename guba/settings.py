@@ -104,12 +104,15 @@ DOWNLOADER_MIDDLEWARES = {
     # This middleware sets the download timeout for requests specified in the DOWNLOAD_TIMEOUT setting.
     'scrapy.contrib.downloadermiddleware.downloadtimeout.DownloadTimeoutMiddleware': 350,
 
+    # handle downloadtimeout error
+    'guba.middlewares.DownloadTimeoutRetryMiddleware': 375,
+
     # Middleware that allows spiders to override the default user agent.
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
 
     # A middlware to retry failed requests that are potentially caused by temporary problems such as 
     # a connection timeout or HTTP 500 error.
-    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 500,
+    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None, # 500,
 
     # This middleware sets all default requests headers specified in the :setting:`DEFAULT_REQUEST_HEADERS` setting.
     'scrapy.contrib.downloadermiddleware.defaultheaders.DefaultHeadersMiddleware': None,
@@ -178,8 +181,11 @@ MONGOD_DB = 'guba'
 GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
 GUBA_STOCK_COLLECTION = 'stock'
 
+PROXY_FROM_REDIS = True
 # Proxy ip list file
 PROXY_IP_FILE = './guba/proxy_ips.txt'
+PROXY_IP_REDIS_KEY = 'guba_proxy_ips:sorted_set'
+PROXY_IP_PUNISH = 10000 # 每次IP访问失败增加的等待时间
 
 # scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
 REDIS_HOST = '219.224.135.91'

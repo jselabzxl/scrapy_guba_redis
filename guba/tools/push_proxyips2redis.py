@@ -17,5 +17,7 @@ with open('../proxy_ips.txt') as f:
         if proxy_ip not in forbid_ips:
             proxy_ips.add(proxy_ip)
 
+print 'proxy ip list ', len(proxy_ips), ' push to redis'
+redis.delete(redis_key)
 for proxy_ip in proxy_ips:
     redis.zincrby(redis_key, proxy_ip, amount=1)
