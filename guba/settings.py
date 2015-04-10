@@ -169,6 +169,7 @@ REFERER_ENABLED = False # disable RefererMiddleware
 RETRY_TIMES = 3 # RetryMiddleware Maximum number of times to retry, in addition to the first download. RetryErrorResponseMiddleware 重试次数
 RETRY_ENABLED = True
 RETRY_HTTP_CODES = [500, 502, 503, 504, 400, 408]
+LOG_STDOUT = True
 
 # RetryForeverMiddleware
 RETRY_INIT_WAIT = 1 # 第一次重试等待1s
