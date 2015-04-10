@@ -145,13 +145,16 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'guba.pipelines.MongodbPipeline': 300,
     # 'guba.pipelines.RedisStoragePipeline': 300,
-    'guba.scrapy_redis.pipelines.RedisPipeline': 400
+    'guba.scrapy_redis.pipelines.RedisPipeline': 400,
     # 'guba.pipelines.JsonWriterPipeline': 800
+    
 }
 
 EXTENSIONS = {
     'scrapy.webservice.WebService': None,
-    'scrapy.telnet.TelnetConsole': None
+    'scrapy.telnet.TelnetConsole': None,
+    'scrapy.contrib.logstats.LogStats': None,
+    'guba.log_exception.LogStats':500
 }
 
 # HTTPERROR_ALLOWED_CODES = [403] # Pass all responses with non-200 status codes contained in this list for httperror middleware.
@@ -209,3 +212,12 @@ SCHEDULER_PERSIST = True
 SCHEDULER_QUEUE_CLASS = "guba.scrapy_redis.queue.SpiderQueue"
 # Schedule requests using a stack (LIFO).
 # SCHEDULER_QUEUE_CLASS = "guba.scrapy_redis.queue.SpiderStack"
+
+# smtp server setting for warining
+WARNING_MAIL_FROM = 'ykbuaa@126.com'
+WARNING_MAIL_TO = 'linhao.lh@qq.com'
+WARNING_SMTP_HOST = 'smtp.126.com'
+WARNING_SMTP_USER = 'ykbuaa'
+WARNING_SMTP_PASS = 'yuankuN'
+ERROR_THRESHOLD = 5
+
