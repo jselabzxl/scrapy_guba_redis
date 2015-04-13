@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+import re
 import time
 import socket
 import base64
@@ -66,6 +68,8 @@ class RetryForeverMiddleware(object):
         self.retry_stable_times = retry_stable_times
         self.retry_add_wait = retry_add_wait
         self.retry_exceptions = self.EXCEPTIONS_TO_RETRY
+        self.pid = os.getpid()
+        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -87,8 +91,8 @@ class RetryForeverMiddleware(object):
         time.sleep(retry_wait)
 
         retries += 1
-        log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
-                level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason)
+        log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s, current ip: %(ip)s, current pid: %(pid)s",
+                level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason, ip=self.ip, pid=self.pid)
         retryreq = request.copy()
         retryreq.meta['retry_times'] = retries
         retryreq.dont_filter = True
@@ -104,6 +108,8 @@ class RetryForeverMiddleware(object):
 class RetryErrorResponseMiddleware(object):
     def __init__(self, retry_times):
         self.retry_times = retry_times
+        self.pid = os.getpid()
+        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -114,15 +120,15 @@ class RetryErrorResponseMiddleware(object):
     def _retry(self, request, reason, spider):
         retries = request.meta.get('retry_times', 0)
         if retries < self.retry_times:
-            log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
-                    level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason)
+            log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s, current ip: %(ip)s, current pid: %(pid)s",
+                    level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason, ip=self.ip, pid=self.pid)
             retryreq = request.copy()
             retryreq.meta['retry_times'] = retries
             retryreq.dont_filter = True
             return retryreq
         else:
-            log.msg(format="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s",
-                    level=log.ERROR, spider=spider, request=request, retries=retries, reason=reason)
+            log.msg(format="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s, current ip: %(ip)s, current pid: %(pid)s",
+                    level=log.ERROR, spider=spider, request=request, retries=retries, reason=reason, ip=self.ip, pid=self.pid)
 
     def process_spider_exception(self, response, exception, spider):
         if 'dont_retry' not in response.request.meta and isinstance(exception, UnknownResponseError):
@@ -189,6 +195,10 @@ class IgnoreHttpError(IgnoreRequest):
 class Redirect302Middleware(object):
     """处理302帖子被删除的情况
     """
+    def __init__(self):
+        self.pid = os.getpid()
+        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+
     def process_spider_input(self, response, spider):
         if response.status == 302:
             raise IgnoreHttpError(response, '302 post deleted, Ignoring 302 response')
@@ -196,10 +206,12 @@ class Redirect302Middleware(object):
     def process_spider_exception(self, response, exception, spider):
         if isinstance(exception, IgnoreHttpError):
             log.msg(
-                    format="Ignoring response %(response)r: 302 deleted",
+                    format="Ignoring response %(response)r: 302 deleted, current ip: %(ip)s, current pid: %(pid)s",
                     level=log.WARNING,
                     spider=spider,
-                    response=response
+                    response=response,
+                    ip=self.ip,
+                    pid=self.pid
             )
 
             return []
@@ -227,6 +239,8 @@ class DownloadTimeoutRetryMiddleware(object):
         self.redis = _default_redis(proxy_redis_host, proxy_redis_port)
         self.proxy_redis_key = proxy_ip_redis_key
         self.proxy_ip_punish = proxy_ip_punish
+        self.pid = os.getpid()
+        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -254,8 +268,8 @@ class DownloadTimeoutRetryMiddleware(object):
         time.sleep(retry_wait)
 
         retries += 1
-        log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
-                level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason)
+        log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s, current ip: %(ip)s, current pid: %(pid)s",
+                level=log.WARNING, spider=spider, request=request, retries=retries, reason=reason, ip=self.ip, pid=self.pid)
         retryreq = request.copy()
         retryreq.meta['retry_times'] = retries
         retryreq.dont_filter = True
