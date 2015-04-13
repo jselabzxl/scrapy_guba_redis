@@ -1,16 +1,18 @@
+# -*- coding=utf-8 -*-
+
+import re
+import os
 from twisted.internet import task
 from scrapy.exceptions import NotConfigured
 from scrapy import log, signals
+from guba.utils import get_pid, get_ip
 from scrapy.mail import MailSender
-import re
-import commands
-import os
 
 
 class LogStats(object):
     """Log basic scraping stats periodically"""
 
-    def __init__(self, stats, interval, mailfrom, mailto, smtphost, smtpuser, smtppass, error_threshold, pid, ip):
+    def __init__(self, stats, interval, mailfrom, mailto, smtphost, smtpuser, smtppass, error_threshold):
         self.stats = stats
         self.interval = interval
         self.multiplier = 60.0 / self.interval
@@ -20,8 +22,8 @@ class LogStats(object):
         self.smtpuser = smtpuser
         self.smtppass = smtppass
         self.error_threshold = error_threshold
-        self.pid = os.getpid()
-        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+        self.pid = get_pid()
+        self.ip = get_ip()
 
     @classmethod
     def from_crawler(cls, crawler):

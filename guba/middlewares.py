@@ -7,7 +7,7 @@ import socket
 import base64
 import random
 from scrapy import log
-from guba.utils import _default_redis
+from guba.utils import _default_redis, get_pid, get_ip
 from scrapy.exceptions import CloseSpider, IgnoreRequest
 from twisted.internet import defer
 from twisted.internet.error import TimeoutError, DNSLookupError, \
@@ -68,8 +68,8 @@ class RetryForeverMiddleware(object):
         self.retry_stable_times = retry_stable_times
         self.retry_add_wait = retry_add_wait
         self.retry_exceptions = self.EXCEPTIONS_TO_RETRY
-        self.pid = os.getpid()
-        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+        self.pid = get_pid()
+        self.ip = get_ip()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -108,8 +108,8 @@ class RetryForeverMiddleware(object):
 class RetryErrorResponseMiddleware(object):
     def __init__(self, retry_times):
         self.retry_times = retry_times
-        self.pid = os.getpid()
-        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+        self.pid = get_pid()
+        self.ip = get_ip()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -191,13 +191,12 @@ class IgnoreHttpError(IgnoreRequest):
         self.response = response
         super(IgnoreHttpError, self).__init__(*args, **kwargs)
 
-
 class Redirect302Middleware(object):
     """处理302帖子被删除的情况
     """
     def __init__(self):
-        self.pid = os.getpid()
-        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+        self.pid = get_pid()
+        self.ip = get_ip()
 
     def process_spider_input(self, response, spider):
         if response.status == 302:
@@ -239,8 +238,8 @@ class DownloadTimeoutRetryMiddleware(object):
         self.redis = _default_redis(proxy_redis_host, proxy_redis_port)
         self.proxy_redis_key = proxy_ip_redis_key
         self.proxy_ip_punish = proxy_ip_punish
-        self.pid = os.getpid()
-        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
+        self.pid = get_pid()
+        self.ip = get_ip()
 
     @classmethod
     def from_crawler(cls, crawler):

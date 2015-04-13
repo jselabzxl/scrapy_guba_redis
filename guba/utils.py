@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import re
+import os
 import md5
 import time
 import redis
+import errno
+import socket
 import pymongo
-import os, errno
 from datetime import datetime
 
 
@@ -58,3 +61,16 @@ def gen_key(key):
 
 def _default_redis(host=REDIS_HOST, port=REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
+
+def get_pid():
+    return os.getpid()
+
+def get_ip():
+    host_ip = 'Unknown'
+    names, aliases, ips = socket.gethostbyname_ex(socket.gethostname())
+    for ip in ips :
+        if not re.match('^192', ip) and not re.match('^172', ip):
+            host_ip = ip
+
+    return host_ip
+
