@@ -2,11 +2,15 @@ from twisted.internet import task
 from scrapy.exceptions import NotConfigured
 from scrapy import log, signals
 from scrapy.mail import MailSender
+import re
+import commands
+import os
+
 
 class LogStats(object):
     """Log basic scraping stats periodically"""
 
-    def __init__(self, stats, interval, mailfrom, mailto, smtphost, smtpuser, smtppass, error_threshold):
+    def __init__(self, stats, interval, mailfrom, mailto, smtphost, smtpuser, smtppass, error_threshold, pid, ip):
         self.stats = stats
         self.interval = interval
         self.multiplier = 60.0 / self.interval
@@ -16,6 +20,8 @@ class LogStats(object):
         self.smtpuser = smtpuser
         self.smtppass = smtppass
         self.error_threshold = error_threshold
+        self.pid = os.getpid()
+        self.ip = re.findall("inet addr:\d*.\d*.\d*.\d*",commands.getstatusoutput('/sbin/ifconfig')[1])[0].split(':')[1]
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -51,13 +57,14 @@ class LogStats(object):
         errrate = (exception_count - self.exception_countprev) * self.multiplier
 
         self.pagesprev, self.itemsprev, self.exception_countprev= pages, items, exception_count
-        msg = "Crawled %d pages (at %d pages/min), scraped %d items (at %d items/min), raised %d exceptions (at %d exceptions/min)" \
-            % (pages, prate, items, irate, exception_count, errrate)
+        msg = "Crawled %d pages (at %d pages/min), scraped %d items (at %d items/min), raised %d exceptions (at %d exceptions/min), current ip is %s, current pid is %s" \
+            % (pages, prate, items, irate, exception_count, errrate, self.ip, self.pid)
         log.msg(msg, spider=spider)
 
         if errrate > self.error_threshold:
             mailer = MailSender(smtphost=self.smtphost, mailfrom=self.mailfrom, smtpuser=self.smtpuser, smtppass=self.smtppass)
-            mailer.send(to=[self.mailto], subject="Scrapy guba redis Error Warning", body="Exception rate has reached to %d" % errrate)
+            mailer.send(to=[self.mailto], subject="Scrapy guba redis Error Warning", body="Exception rate has reached to %d,\n current ip is %s, current pid is %s" \
+                    % (errrate, self.ip, self.pid))
 
     def spider_closed(self, spider, reason):
         if self.task.running:
