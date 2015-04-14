@@ -24,7 +24,7 @@ MONGODB写入速度1000条/秒
     单个mongodb集群 3台爬虫机器 每台机器9个scrapy_detail 4个scrapy_list list速度条10/分钟 detail速度10条/分钟
 
 2552 stocks, 每2分钟更新一次
-    单个mongodb集群 3台爬虫机器 每台机器20个scrapy_detail 10个scrapy_list list速度条280/分钟 detail速度220条/分钟
+    单个mongodb集群 3台爬虫机器 每台机器20个scrapy_detail 10个scrapy_list list速度条280/分钟 detail速度220条/分钟(忙时) 80条/分钟（闲时）
 
 MONGODB存储股吧帖子数据规模估计：
   存储量与空间换算：40GB=3000万 => 每1万条帖子= 13.653MB => 每条帖子1.4KB
