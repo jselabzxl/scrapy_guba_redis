@@ -23,5 +23,5 @@ while 1:
         elif mode == 'list':
             total_count += mongo[col].find().count()
 
-    print total_count - start_count
+    print mode, ': ', total_count - start_count
     time.sleep(60)
