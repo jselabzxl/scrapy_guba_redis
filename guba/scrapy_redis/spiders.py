@@ -30,7 +30,6 @@ class RedisMixin(object):
         """Returns a request to be scheduled or none."""
         url = self.server.lpop(self.redis_key)
         if url:
-            print 'pop url ', url, ' ', time.time()
             return self.make_requests_from_url(url)
 
     def schedule_next_request(self):

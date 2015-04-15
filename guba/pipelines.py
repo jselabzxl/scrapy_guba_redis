@@ -13,6 +13,7 @@ from scrapy import log
 from twisted.internet.threads import deferToThread
 from guba.items import GubaPostListItem, GubaStocksItem, GubaPostDetailItem, GubaPostDetailAllItem
 from guba.utils import _default_mongo, mkdir_p, gen_key
+from guba.naivebayes_classifier.naivebayes_classifier import naivebayes as nb_classifier
 
 
 class JsonWriterPipeline(object):
@@ -117,6 +118,7 @@ class MongodbPipeline(object):
     def process_post_detail(self, item, spider):
         post = item.to_dict()
         post['_id'] = post['post_id']
+        post['sentiment'] = nb_classifier(post)
         stock_id = post['stock_id']
         post_collection = self.post_collection_prefix + stock_id
 

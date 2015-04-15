@@ -38,6 +38,7 @@ class GubaStockDetailRtRedisSpider(RedisSpider):
         stock_id = headcode_span.find("a").string
 
         content = soup.find('div', {'class':'stockcodec'}).text
+        title = soup.find('div', {'id': 'zwconttbt'}).text
         releaseTimePara = re.search(r'发表于 (.*?) (.*?) ', str(soup.find('div', {'class': 'zwfbtime'})))
         part1 = releaseTimePara.group(1).decode('utf-8')
         part2 = releaseTimePara.group(2).decode('utf-8')
@@ -49,7 +50,7 @@ class GubaStockDetailRtRedisSpider(RedisSpider):
             lastReplyTime = re.search(r'发表于 (.*?)<', str(zwlitxb_divs[0])).group(1).decode('utf-8').replace('  ', ' ')
 
         item_dict = {'post_id': post_id, 'content': content, 'releaseTime': releaseTime, 'lastReplyTime': lastReplyTime, \
-                'stock_id': stock_id}
+                'stock_id': stock_id, 'title': title}
         item = GubaPostDetailItem()
         for key in GubaPostDetailItem.RESP_ITER_KEYS:
             item[key] = item_dict[key]

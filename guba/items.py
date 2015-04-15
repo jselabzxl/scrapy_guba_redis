@@ -37,11 +37,12 @@ class GubaPostDetailItem(Item):
     """
     post_id = Field() # 帖子唯一标识
     content = Field() # 内容
+    title = Field() # 标题
     releaseTime = Field() # 发表时间
     lastReplyTime = Field() # 最后回复时间
     stock_id = Field() # 股票代码
 
-    RESP_ITER_KEYS = ['post_id', 'content', 'releaseTime', 'lastReplyTime', 'stock_id']
+    RESP_ITER_KEYS = ['post_id', 'content', 'title', 'releaseTime', 'lastReplyTime', 'stock_id']
 
     PIPED_UPDATE_KEYS = RESP_ITER_KEYS
 

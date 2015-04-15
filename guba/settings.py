@@ -168,7 +168,7 @@ REFERER_ENABLED = False # disable RefererMiddleware
 RETRY_TIMES = 3 # RetryMiddleware Maximum number of times to retry, in addition to the first download. RetryErrorResponseMiddleware 重试次数
 RETRY_ENABLED = True
 RETRY_HTTP_CODES = [500, 502, 503, 504, 400, 408]
-LOG_STDOUT = True
+LOG_STDOUT = False
 
 # RetryForeverMiddleware
 RETRY_INIT_WAIT = 1 # 第一次重试等待1s
@@ -177,9 +177,9 @@ RETRY_ADD_WAIT = 1 # 每次重试后增加的等待秒数
 
 # MONGODB setting
 HASH_MONGO = False # 表示通过hash选入口，False表示使用固定入口
-MONGOD_HOST = '219.224.135.47'
-MONGOD_PORT = 27019
-MONGOD_HOST_PORT_LIST = ['219.224.135.47:27019', '219.224.135.48:27019', '219.224.135.60:27019']
+MONGOD_HOST = '219.224.135.94'
+MONGOD_PORT = 27016
+MONGOD_HOST_PORT_LIST = [] # ['219.224.135.47:27019', '219.224.135.48:27019', '219.224.135.60:27019']
 MONGOD_DB = 'guba'
 GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
 GUBA_STOCK_COLLECTION = 'stock'
