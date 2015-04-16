@@ -238,3 +238,13 @@ class RedisStoragePipeline(object):
     def item_key_detail(self, item, spider):
         stock_id = item['stock_id']
         return "%s:detail_items" % stock_id
+
+class GubaPipeline(object):
+
+    def __init__(self):
+        self.file = open('json_1.jl','wb')
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + "\n"
+        self.file.write(line)
+        return item
