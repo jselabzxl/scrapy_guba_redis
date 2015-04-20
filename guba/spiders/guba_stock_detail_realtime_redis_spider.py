@@ -26,12 +26,12 @@ class GubaStockDetailRtRedisSpider(RedisSpider):
     redis_key = 'guba_stock_list_realtime_redis_spider:items'
 
     def parse(self, response):
-        log.msg(str('here'))
         resp = response.body
         soup = BeautifulSoup(resp)
 
         try:
             post_id = int(re.search(r'topicid="(.*?)";', str(soup)).group(1))
+            log.msg(str(post_id))
         except:
             raise UnknownResponseError
 
