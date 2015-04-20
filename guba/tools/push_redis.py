@@ -8,13 +8,21 @@ sel_stocks_count = int(sys.argv[1])
 
 stock_ids = []
 stock_count_dict = dict()
+"""
 with open('stock_count.txt') as f:
     for line in f:
         stock_id, count = line.strip().split(',')
         stock_count_dict[stock_id] = float(count)
+"""
+
+with open("stock_ids_2742.txt") as f:
+    for line in f:
+        stock_id = line.strip()
+        stock_count_dict[stock_id] = 1
 
 idx = 0
 result = sorted(stock_count_dict.iteritems(), key=lambda (k, v): v, reverse=True)
+
 for stock_id, count in result:
     stock_ids.append(stock_id)
     if idx >= sel_stocks_count - 1:
@@ -44,14 +52,3 @@ while 1:
 
     print 'push redis: ', time.time(), ' sleep 1 minute...stock ids length: ', len(stock_ids)
     time.sleep(60)
-
-"""
-stock_type_list = ['沪A', '沪B', '深A', '深B']
-
-for stock_type in stock_type_list:
-    results = mongo[GUBA_STOCK_COLLECTION].find({"stock_type": stock_type})
-    for r in results:
-        stock_id = r['stock_id']
-        url = "http://guba.eastmoney.com/list,%s,f.html" % stock_id
-        redis.lpush(redis_key, url)
-"""
