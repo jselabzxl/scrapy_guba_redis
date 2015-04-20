@@ -31,7 +31,6 @@ class GubaStockDetailRtRedisSpider(RedisSpider):
 
         try:
             post_id = int(re.search(r'topicid="(.*?)";', str(soup)).group(1))
-            log.msg(str(post_id))
         except:
             raise UnknownResponseError
 

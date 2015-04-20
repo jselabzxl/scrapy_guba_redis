@@ -34,8 +34,6 @@ class GubaStockListRtRedisSpider(RedisSpider):
     redis_key = 'guba_stock_list_redis_spider:start_urls'
 
     def parse(self, response):
-        print 'response accepted: ', time.time()
-
         results = []
         resp = response.body
         try:
@@ -89,7 +87,7 @@ class GubaStockListRtRedisSpider(RedisSpider):
                     isNews = True
 
             # d表示按照时间排序回复
-            post_url = HOST_URL + l3_span.find("a").get("href").replace('.html', ',d.html')
+            post_url = HOST_URL + l3_span.find("a").get("href").replace('.html', ',d.html').lstrip('/')
             post_id = int(re.search(r'news,.*?,(.*?),', post_url).group(1))
             post_title = l3_span.find("a").get("title")
 
@@ -139,12 +137,8 @@ class GubaStockListRtRedisSpider(RedisSpider):
             newest_post_id = sorted_results[0]['post_id']
 
         results = filter(lambda item: item['post_id'] > latest_post_id, sorted_results)
-        for r in results:
-            print r['post_id'], latest_post_id
 
         if newest_post_id and newest_post_id > latest_post_id:
             redis.set(LATEST_POST_ID.format(stock_id=stock_id), newest_post_id)
-
-        print 'parse complited: ', time.time()
 
         return results
