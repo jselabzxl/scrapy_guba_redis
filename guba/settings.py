@@ -146,7 +146,8 @@ ITEM_PIPELINES = {
     'guba.pipelines.MongodbPipeline': 300,
     # 'guba.pipelines.RedisStoragePipeline': 300,
     'guba.scrapy_redis.pipelines.RedisPipeline': 400,
-    # 'guba.pipelines.JsonWriterPipeline': 800
+    # 'guba.pipelines.JsonWriterPipeline': 800,
+    # 'guba.pipelines.GubaPipeline': 200
 }
 
 EXTENSIONS = {
