@@ -56,11 +56,12 @@ class MongodbPipeline(object):
 
         self.mongos_list = []
         if self.hash_mongo:
-            for mongo in mongodb_host_port_list:
-                mongo_host = mongo.split(":")[0]
-                mongo_port = int(mongo.split(":")[1])
-                mongos = _default_mongo(mongo_host, port=mongo_port, usedb=db)
-                self.mongos_list.append(mongos)
+            for mongo, weight in mongodb_host_port_list.iteritems():
+                if weight == 1:
+                    mongo_host = mongo.split(":")[0]
+                    mongo_port = int(mongo.split(":")[1])
+                    mongos = _default_mongo(mongo_host, port=mongo_port, usedb=db)
+                    self.mongos_list.append(mongos)
 
         log.msg('Mongod connect to {host}:{port}:{db}'.format(host=host, port=port, db=db), level=log.INFO)
 
