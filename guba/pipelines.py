@@ -100,6 +100,7 @@ class MongodbPipeline(object):
         """根据idstr进行hash取mongos入口
         """
         key = gen_key(idstr)
+        log.msg(str(key % len(self.mongos_list)))
         mongos = self.mongos_list[key % len(self.mongos_list)]
         return mongos
 
