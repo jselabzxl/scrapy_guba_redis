@@ -53,12 +53,14 @@ class MongodbPipeline(object):
         self.stock_collection = stock_collection
         self.post_collection_prefix = post_collection_prefix
         self.hash_mongo = hash_mongo
+
         self.mongos_list = []
-        for mongo in mongodb_host_port_list:
-            mongo_host = mongo.split(":")[0]
-            mongo_port = int(mongo.split(":")[1])
-            mongos = _default_mongo(mongo_host, port=mongo_port, usedb=db)
-            self.mongos_list.append(mongos)
+        if self.hash_mongo:
+            for mongo in mongodb_host_port_list:
+                mongo_host = mongo.split(":")[0]
+                mongo_port = int(mongo.split(":")[1])
+                mongos = _default_mongo(mongo_host, port=mongo_port, usedb=db)
+                self.mongos_list.append(mongos)
 
         log.msg('Mongod connect to {host}:{port}:{db}'.format(host=host, port=port, db=db), level=log.INFO)
 
