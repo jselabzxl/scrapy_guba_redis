@@ -34,8 +34,7 @@ class GubaStockDetailRtRedisSpider(RedisSpider):
         except:
             raise UnknownResponseError
 
-        headcode_span = soup.find("span", {"id": "stockheadercode"})
-        stock_id = headcode_span.find("a").string
+        stock_id = re.search(r'barcode = \"(.*?)\";', str(soup)).group(1)
 
         content = soup.find('div', {'class':'stockcodec'}).text
         title = soup.find('div', {'id': 'zwconttbt'}).text
