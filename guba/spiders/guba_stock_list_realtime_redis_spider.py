@@ -43,9 +43,7 @@ class GubaStockListRtRedisSpider(RedisSpider):
         soup = BeautifulSoup(resp)
 
         try:
-            #headcode_span = soup.find("span", {"id": "stockheadercode"})
-            title = soup.find("title")
-            stock_id = re.search(r'\((.*?)\)', str(title)).group(1)
+            stock_id = re.search(r'barcode = \"(.*?)\";', str(soup)).group(1)
         except:
             raise UnknownResponseError
 
