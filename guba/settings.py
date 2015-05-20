@@ -178,9 +178,9 @@ RETRY_ADD_WAIT = 1 # 每次重试后增加的等待秒数
 
 # MONGODB setting
 HASH_MONGO = True # 表示通过hash选入口，False表示使用固定入口
-MONGOD_HOST = '219.224.135.94'
+MONGOD_HOST = '172.17.13.207'
 MONGOD_PORT = 27020
-MONGOD_HOST_PORT_LIST = {'219.224.135.94:27020': 1, '219.224.135.95:27020': 0}
+MONGOD_HOST_PORT_LIST = {'172.17.13.207:27020': 1, '172.17.13.208:27020': 0}
 MONGOD_DB = 'guba'
 GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
 GUBA_STOCK_COLLECTION = 'stock'
@@ -192,9 +192,9 @@ PROXY_IP_REDIS_KEY = 'guba_proxy_ips:sorted_set'
 PROXY_IP_PUNISH = 10000 # 每次IP访问失败增加的等待时间
 
 # scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
-REDIS_HOST = '219.224.135.91'
+REDIS_HOST = '172.17.13.203'
 REDIS_PORT = 6379
-REDIS_STORAGE_HOST = '219.224.135.91'
+REDIS_STORAGE_HOST = '172.17.13.203'
 REDIS_STORAGE_PORT = 6379
 
 # Specify the full Redis URL for connecting (optional).
@@ -215,8 +215,8 @@ SCHEDULER_QUEUE_CLASS = "guba.scrapy_redis.queue.SpiderQueue"
 # SCHEDULER_QUEUE_CLASS = "guba.scrapy_redis.queue.SpiderStack"
 
 # smtp server setting for warining
-WARNING_MAIL_FROM = 'ykbuaa@126.com'
-WARNING_MAIL_TO = 'linhao.lh@qq.com'
+WARNING_MAIL_FROM = '15195817207@163.com'
+WARNING_MAIL_TO = '15338706547@qq.com'
 WARNING_SMTP_HOST = 'smtp.126.com'
 WARNING_SMTP_USER = 'ykbuaa'
 WARNING_SMTP_PASS = 'yuankuN'
