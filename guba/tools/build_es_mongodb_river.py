@@ -7,9 +7,9 @@ command_base = "curl -XPUT 'http://%s:%s/_river/river_guba_post_%s/_meta' -d '{ 
 with open("stock_ids_2742.txt") as f:
     for line in f:
         stock_id = line.strip()
-        command = command_base % ("219.224.135.94", "9200", stock_id + "_95", "\"219.224.135.95\"", "\"27020\"", "\"guba\"", "\"post_stock_" + stock_id + "\"", "\"post_stock_" + stock_id + "\"", "\"219_224_135_95_27020\"")
+        command = command_base % ("172.17.13.207", "9200", stock_id + "_95", "\"172.17.13.208\"", "\"27020\"", "\"guba\"", "\"post_stock_" + stock_id + "\"", "\"post_stock_" + stock_id + "\"", "\"172.17.13.208_27020\"")
         output = os.popen(command)
         print output.read()
-        command = command_base % ("219.224.135.94", "9200", stock_id + "_94", "\"219.224.135.94\"", "\"27020\"", "\"guba\"", "\"post_stock_" + stock_id + "\"", "\"post_stock_" + stock_id + "\"", "\"219_224_135_94_27020\"")
+        command = command_base % ("172.17.13.207", "9200", stock_id + "_94", "\"172.17.13.207\"", "\"27020\"", "\"guba\"", "\"post_stock_" + stock_id + "\"", "\"post_stock_" + stock_id + "\"", "\"172.17.13.207_27020\"")
         output = os.popen(command)
         print output.read()
