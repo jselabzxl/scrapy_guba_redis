@@ -178,9 +178,9 @@ RETRY_ADD_WAIT = 1 # 每次重试后增加的等待秒数
 
 # MONGODB setting
 HASH_MONGO = True # 表示通过hash选入口，False表示使用固定入口
-MONGOD_HOST = '172.17.13.207'
-MONGOD_PORT = 27020
-MONGOD_HOST_PORT_LIST = {'172.17.13.207:27020': 1, '172.17.13.208:27020': 0}
+MONGOD_HOST = '192.168.146.128'
+MONGOD_PORT = 27017
+#MONGOD_HOST_PORT_LIST = {'172.17.13.207:27020': 1, '172.17.13.208:27020': 0}
 MONGOD_DB = 'guba'
 GUBA_POST_COLLECTION_PREFIX = 'post_stock_'
 GUBA_STOCK_COLLECTION = 'stock'
@@ -192,10 +192,10 @@ PROXY_IP_REDIS_KEY = 'guba_proxy_ips:sorted_set'
 PROXY_IP_PUNISH = 10000 # 每次IP访问失败增加的等待时间
 
 # scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
-REDIS_HOST = '172.17.13.203'
-REDIS_PORT = 6379
-REDIS_STORAGE_HOST = '172.17.13.203'
-REDIS_STORAGE_PORT = 6379
+REDIS_HOST = '192.168.146.128'
+REDIS_PORT = 7001
+REDIS_STORAGE_HOST = '192.168.146.128'
+REDIS_STORAGE_PORT = 7001
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
