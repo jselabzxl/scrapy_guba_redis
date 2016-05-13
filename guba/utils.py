@@ -14,7 +14,7 @@ from datetime import datetime
 MONGOD_HOST = 'localhost'
 MONGOD_PORT = 27017
 REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
+REDIS_PORT = 7001
 
 def _default_mongo(host=MONGOD_HOST, port=MONGOD_PORT, usedb='test'):
     # 强制写journal，并强制safe
